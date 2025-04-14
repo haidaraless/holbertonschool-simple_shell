@@ -1,0 +1,45 @@
+### 📘 simple_shell.1` (Manual Page)
+
+Save this as `simple_shell.1`:
+
+```man
+.TH SIMPLESHELL 1 "April 2025" "SimpleShell Manual" "User Commands"
+.SH NAME
+simple_shell \- A simple Unix-like shell
+
+.SH SYNOPSIS
+.B simple_shell
+.RI [ options ]
+
+.SH DESCRIPTION
+.B SimpleShell
+is a minimal Unix shell implemented in C. It supports interactive command execution, environment management, input/output redirection, and more.
+
+.SH FEATURES
+.TP
+.B Built-in commands:
+cd, exit, help, setenv, unsetenv
+.TP
+.B External command execution:
+Any command in your system's PATH.
+.TP
+.B Redirection:
+Input (<), output (>), and piping (|).
+
+.SH USAGE
+Launch the shell by running:
+
+.B ./simple_shell
+
+Then enter commands as you would in bash or sh.
+
+.SH EXIT STATUS
+.B simple_shell
+returns 0 on success, or an error code otherwise.
+
+.SH AUTHORS
+See the AUTHORS file for a list of contributors.
+
+.SH SEE ALSO
+.BR bash (1),
+.BR sh (1)
