@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern char **environ;
-
 /**
 * execute_command - creates a child process to run an external command.
 * @args: array of strings representing the command and its arguments.

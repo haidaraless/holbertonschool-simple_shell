@@ -41,7 +41,7 @@ int main(void)
 		/* Check for empty input or parsing failure */
 		if (!args || !args[0])
 		{
-			free(args);
+			free_tokens(args);
 			continue;
 		}
 
@@ -49,7 +49,7 @@ int main(void)
 		if (!handle_builtin(args))
 			execute_command(args); /* Execute external command */
 
-		free(args); /* Free tokenized input */
+		free_tokens(args); /* Free tokenized input */
 	}
 
 	free(line); /* Free raw input */
