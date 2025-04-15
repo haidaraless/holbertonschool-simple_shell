@@ -20,21 +20,21 @@ int status;
 
 while (1)
 {
+if (isatty(STDIN_FILENO))
 printf("$ ");
+
 read = getline(&line, &len, stdin);
 if (read == -1)
 break;
 
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
-
 args = parse_input(line);
 if (!args || !args[0])
 {
 free_tokens(args);
 continue;
 }
-
 pid = fork();
 if (pid == 0)
 {
