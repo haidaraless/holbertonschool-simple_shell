@@ -28,7 +28,6 @@ int main(void)
 		if (read == -1)
 		{
 			/* Handle Ctrl+D (EOF) */
-			free(line);
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			break;
@@ -37,14 +36,13 @@ int main(void)
 		if (line[read - 1] == '\n')
 			line[read - 1] = '\0';
 
-		if (strlen(line) == 0)
-			continue;
-
 		args = parse_input(line); /* Tokenize the input */
-		if (args == NULL)
+		if (!args || !args[0])
+		{
+			free(args);
 			continue;
+		}
 
-		/* Handle built-in commands like "exit" */
 		if (handle_builtin(args))
 		{
 			free(args);
