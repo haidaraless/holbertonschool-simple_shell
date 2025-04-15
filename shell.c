@@ -27,24 +27,31 @@ int main(void)
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
-			/* Handle Ctrl+D (EOF) */
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
-		/* Remove newline character from input */
+
+		/* Remove newline character */
 		if (line[read - 1] == '\n')
 			line[read - 1] = '\0';
 
 		args = parse_input(line); /* Tokenize the input */
-		if (!args)
+
+		/* Check for empty input or parsing failure */
+		if (!args || !args[0])
+		{
+			free(args);
 			continue;
+		}
 
+		/* Check and handle built-in commands */
 		if (!handle_builtin(args))
-			execute_command(args); /* Execute external commands using execve */
+			execute_command(args); /* Execute external command */
 
-		free(args);  /* Clean up memory */
+		free(args); /* Free tokenized input */
 	}
-	free(line);  /* Clean up input buffer */
+
+	free(line); /* Free raw input */
 	return (0);
 }
