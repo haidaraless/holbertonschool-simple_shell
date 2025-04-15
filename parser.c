@@ -17,7 +17,7 @@ char **parse_input(char *line)
 	int bufsize = 64, i = 0;
 	char **tokens = malloc(bufsize * sizeof(char *));
 	char *token;
-	char **temp = realloc(tokens, bufsize * sizeof(char *));
+	char **new_tokens = realloc(tokens, bufsize * sizeof(char *));
 
 	if (!tokens)
 	{
@@ -25,30 +25,24 @@ char **parse_input(char *line)
 		exit(EXIT_FAILURE);
 	}
 
-	if (line == NULL || line[0] == '\0')
-	{
-		free(tokens);  /* Free the initially allocated memory if empty input */
-		return (NULL);
-	}
-
-	token = strtok(line, " \t\n");  /* Tokenize input */
+	token = strtok(line, " ");
 	while (token != NULL)
 	{
 		tokens[i++] = token;
+
 		if (i >= bufsize)
 		{
 			bufsize += 64;
-
-			if (!temp)
+			if (!new_tokens)
 			{
+				free(tokens);
 				perror("realloc");
-				free(tokens);  /* Free previously allocated memory before exit */
 				exit(EXIT_FAILURE);
 			}
-			tokens = temp;  /* Assign the new memory location to tokens */
+			tokens = new_tokens;
 		}
-		token = strtok(NULL, " \t\n");
+		token = strtok(NULL, " ");
 	}
-	tokens[i] = NULL;  /* Null-terminate the array of arguments */
+	tokens[i] = NULL;
 	return (tokens);
 }

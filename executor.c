@@ -1,4 +1,11 @@
 #include "simple_shell.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+extern char **environ;
 
 /**
 * execute_command - creates a child process to run an external command.
