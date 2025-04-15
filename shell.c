@@ -21,15 +21,17 @@ int main(void)
 
 	while (1)
 	{
-		printf("$ "); /* Display prompt */
+		if (isatty(STDIN_FILENO))
+			printf("$ "); /* Display prompt */
 
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
 			/* Handle Ctrl+D (EOF) */
 			free(line);
-			write(STDOUT_FILENO, "\n", 1);
-			exit(0);
+			if (isatty(STDIN_FILENO))
+				write(STDOUT_FILENO, "\n", 1);
+			break;
 		}
 		/* Remove newline character from input */
 		if (line[read - 1] == '\n')
