@@ -22,7 +22,7 @@ void execute_command(char **args)
 	if (pid == 0)
 	{
 		/* Child process */
-		if (execvp(args[0], args, environ) == -1)
+		if (execve(args[0], args, environ) == -1)
 			perror("simple_shell");
 		exit(EXIT_FAILURE);
 	}
