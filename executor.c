@@ -22,12 +22,15 @@ void execute_command(char **args)
 	if (pid == 0)
 	{
 		/* Child process */
-		if (execvp(args[0], args) == -1)
+		if (execvp(args[0], args, environ) == -1)
 			perror("simple_shell");
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
+	{
+		/* Fork failed */
 		perror("fork");
+	}
 	else
 	{
 		/* Parent process waits */

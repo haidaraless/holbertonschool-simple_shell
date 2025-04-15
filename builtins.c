@@ -7,19 +7,13 @@
 */
 int handle_builtin(char **args)
 {
-	int i;
-
 	if (args[0] == NULL)
 		return (0);
 
 	if (strcmp(args[0], "exit") == 0)
-		exit(0);
-	else if (strcmp(args[0], "env") == 0)
 	{
-		for (i = 0; environ[i] != NULL; i++)
-			printf("%s\n", environ[i]);
-		return (1);
+		free(args);
+		exit(0);
 	}
-
 	return (0);
 }

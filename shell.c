@@ -1,17 +1,16 @@
 #include "simple_shell.h"
 #include "builtins.h"
 
-
 /**
-* main - Entry point for the simple shell
+* main - A minimal UNIX command line interpreter.
+*
 * Description:
 *   - Displays a prompt and waits for user input.
-*   - Parses input into command and arguments.
-*   - Handles built-in commands like "exit" and "env".
-*   - Executes external commands using fork + exec.
-*   - Repeats until user exits with "exit" or Ctrl+D.
+*   - Accepts a single command (no arguments).
+*   - Uses execve() to execute the command (must be a full path).
+*   - Handles EOF (Ctrl+D) and prints error if command fails.
 *
-* Return: 0 on success, exits with failure on error
+* Return: Always 0.
 */
 int main(void)
 {
@@ -22,33 +21,37 @@ int main(void)
 
 	while (1)
 	{
-		printf("$ ");  /* Display prompt */
+		printf("$ "); /* Display prompt */
 
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
-			free(line);  /* Exit on Ctrl+D */
-			exit(EXIT_SUCCESS);
+			/* Handle Ctrl+D (EOF) */
+			free(line);
+			write(STDOUT_FILENO, "\n", 1);
+			exit(0);
 		}
+		/* Remove newline character from input */
+		if (line[read - 1] == '\n')
+			line[read - 1] = '\0';
 
-		args = parse_input(line);  /* Tokenize input */
-		if (args == NULL || args[0] == NULL)
+		if (strlen(line) == 0)
+			continue;
+
+		args = parse_input(line); /* Tokenize the input */
+		if (args == NULL)
+			continue;
+
+		/* Handle built-in commands like "exit" */
+		if (handle_builtin(args))
 		{
 			free(args);
 			continue;
 		}
-
-		if (handle_builtin(args))  /* Handle built-in commands */
-		{
-			free(args);
-			continue;
-		}
-
-		execute_command(args);  /* Run external commands */
-
+		/* Execute external commands using execve */
+		execute_command(args);
 		free(args);  /* Clean up memory */
 	}
-
-	free(line);
+	free(line);  /* Clean up input buffer */
 	return (0);
 }
