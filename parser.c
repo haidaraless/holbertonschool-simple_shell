@@ -15,6 +15,7 @@ char **parse_input(char *line)
 int bufsize = 64, i = 0;
 char **tokens = malloc(bufsize * sizeof(char *));
 char *token;
+char **temp;
 
 if (!tokens)
 {
@@ -36,7 +37,7 @@ i++;
 if (i >= bufsize)
 {
 bufsize += 64;
-char **temp = realloc(tokens, bufsize *sizeof(char *));
+temp = realloc(tokens, bufsize *sizeof(char *));
 if (!temp)
 {
 free_tokens(tokens);
