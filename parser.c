@@ -1,4 +1,6 @@
 #include "simple_shell.h"
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * parse_input - splits a line of input into an array of arguments.

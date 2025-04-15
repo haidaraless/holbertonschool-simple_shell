@@ -1,6 +1,7 @@
 #include "simple_shell.h"
 #include "builtins.h"
 
+
 /**
 * main - Entry point for the simple shell
 * Description:

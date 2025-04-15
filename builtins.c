@@ -7,6 +7,9 @@
 */
 int handle_builtin(char **args)
 {
+	extern char **environ;
+	int i;
+
 	if (args[0] == NULL)
 		return 0;
 
@@ -14,9 +17,7 @@ int handle_builtin(char **args)
 		exit(0);
 	else if (strcmp(args[0], "env") == 0)
 	{
-		extern char **environ;
-
-		for (int i = 0; environ[i] != NULL; i++)
+		for (i = 0; environ[i] != NULL; i++)
 			printf("%s\n", environ[i]);
 		return (1);
 	}
