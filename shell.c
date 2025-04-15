@@ -1,4 +1,9 @@
 #include "simple_shell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
 
 /**
 * main - Basic shell loop that handles command lines with arguments
@@ -22,19 +27,19 @@ break;
 
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
+
 args = parse_input(line);
 if (!args || !args[0])
 {
 free_tokens(args);
 continue;
 }
+
 pid = fork();
 if (pid == 0)
 {
-if (execvp(args[0], args) == -1)
-{
+execvp(args[0], args);
 perror("hsh");
-}
 exit(EXIT_FAILURE);
 }
 else if (pid < 0)
@@ -43,6 +48,7 @@ else
 waitpid(pid, &status, 0);
 free_tokens(args);
 }
+
 free(line);
 return (0);
 }
