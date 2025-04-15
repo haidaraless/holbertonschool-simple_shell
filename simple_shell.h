@@ -18,5 +18,6 @@
 /* function prototypes */
 char **parse_input(char *line);
 void execute_command(char **args);
+extern char **environ;
 
 #endif
