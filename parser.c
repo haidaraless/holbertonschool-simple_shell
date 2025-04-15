@@ -14,23 +14,33 @@
 */
 char **parse_input(char *line)
 {
+	int bufsize = 64, i = 0;
+	char **tokens = malloc(bufsize * sizeof(char *));
 	char *token;
-	char **tokens = malloc(64 * sizeof(char *));
-	int i = 0;
 
 	if (!tokens)
 	{
 		perror("malloc");
-		return (NULL);
+		exit(EXIT_FAILURE);
 	}
 
-	token = strtok(line, " \t\n");
-	while (token)
+	token = strtok(line, " ");
+	while (token != NULL)
 	{
 		tokens[i++] = token;
-		token = strtok(NULL, " \t\n");
-	}
 
+		if (i >= bufsize)
+		{
+			bufsize += 64;
+			tokens = realloc(tokens, bufsize * sizeof(char *));
+			if (!tokens)
+			{
+				perror("realloc");
+				exit(EXIT_FAILURE);
+			}
+		}
+		token = strtok(NULL, " ");
+	}
 	tokens[i] = NULL;
 	return (tokens);
 }

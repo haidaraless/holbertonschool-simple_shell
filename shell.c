@@ -22,7 +22,7 @@ int main(void)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			printf("$ "); /* Display prompt */
+			write(STDOUT_FILENO, "$ ", 2); /* Display prompt */
 
 		read = getline(&line, &len, stdin);
 		if (read == -1)
@@ -37,19 +37,12 @@ int main(void)
 			line[read - 1] = '\0';
 
 		args = parse_input(line); /* Tokenize the input */
-		if (!args || !args[0])
-		{
-			free(args);
+		if (!args)
 			continue;
-		}
 
-		if (handle_builtin(args))
-		{
-			free(args);
-			continue;
-		}
-		/* Execute external commands using execve */
-		execute_command(args);
+		if (!handle_builtin(args))
+			execute_command(args); /* Execute external commands using execve */
+
 		free(args);  /* Clean up memory */
 	}
 	free(line);  /* Clean up input buffer */
