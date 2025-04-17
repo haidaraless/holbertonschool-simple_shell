@@ -35,6 +35,14 @@ if (!args || !args[0])
 free_tokens(args);
 continue;
 }
+
+if (!check_command_in_path(args[0]))
+{
+fprintf(stderr, "%s: command not found\n", args[0]);
+free_tokens(args);
+continue;
+}
+
 pid = fork();
 if (pid == 0)
 {
