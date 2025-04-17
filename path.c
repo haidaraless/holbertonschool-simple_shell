@@ -20,4 +20,4 @@ token = strtok(NULL, ":");
 }
 
 free(path_copy);
-return 0;
+return (0);
