@@ -20,5 +20,5 @@ char **parse_input(char *line);
 void execute_command(char **args);
 void free_tokens(char **tokens);
 extern char **environ;
-
+int check_command_in_path(char *command);
 #endif /* SIMPLE_SHELL_H */
