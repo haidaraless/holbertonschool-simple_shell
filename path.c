@@ -14,7 +14,7 @@ while (token != NULL) {
 snprintf(full_path, sizeof(full_path), "%s/%s", token, command);
 if (access(full_path, X_OK) == 0) {
 free(path_copy);
-return 1;
+return (1);
 }
 token = strtok(NULL, ":");
 }
