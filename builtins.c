@@ -7,20 +7,14 @@
 */
 int handle_builtin(char **args)
 {
-	if (args[0] == NULL)
-		return (0);
+if (args[0] == NULL)
+return (0);
 
-	if (strcmp(args[0], "exit") == 0)
-	{
-	 if (args[1] != NULL)
-	{
+if (strcmp(args[0], "exit") == 0)
+{
 
-	fprintf(stderr, "exit: too many arguments\n");
-	return (1);
-
-	}
-		free(args);
-		exit(0);
-	}
-	return (0);
+free(args);
+exit(0);
+}
+return (0);
 }
