@@ -36,6 +36,14 @@ free_tokens(args);
 continue;
 }
 
+if (strcmp(args[0], "exit") == 0)
+{
+free_tokens(args);
+free(line);
+exit(0);
+}
+
+
 if (!check_command_in_path(args[0]))
 {
 fprintf(stderr, "%s: command not found\n", args[0]);
