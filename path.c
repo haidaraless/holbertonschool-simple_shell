@@ -1,16 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include "simple_shell.h"
 
-
 /**
- * find_command - finds the path of a given command
+ * find_command - finds the full path of a command
  * @command: the command to search for
  *
  * Return: the full path to the command, or NULL if not found
  */
+
 char *find_command(char *command)
 {
 char *path_env = NULL;
@@ -18,7 +14,7 @@ char *path_copy, *dir;
 char full_path[1024];
 int i = 0;
 
-
+/* Search for PATH in the environment variables */
 while (environ[i])
 {
 if (strncmp(environ[i], "PATH=", 5) == 0)
@@ -32,12 +28,13 @@ i++;
 if (!path_env)
 return (NULL);
 
+/* Copy the PATH and split by colon to search directories */
 path_copy = strdup(path_env);
 dir = strtok(path_copy, ":");
 
 while (dir)
 {
-sprintf(full_path, "%s/%s", dir, command);
+snprintf(full_path, sizeof(full_path), "%s/%s", dir, command);
 if (access(full_path, X_OK) == 0)
 {
 free(path_copy);
@@ -50,21 +47,86 @@ free(path_copy);
 return (NULL);
 }
 
+
 /**
- * has_path_env - Checks if the PATH variable is present in the environment
+ * execute_command - executes a command by forking a child process
+ * @args: the arguments to execute
  *
- * Return: 1 if PATH is found, 0 otherwise
+ * Return: void
  */
-
-int has_path_env(void)
+void execute_command(char **args)
 {
-int i = 0;
+char *command_path;
+pid_t pid;
+int status;
 
-while (environ[i])
+command_path = find_command(args[0]);
+
+/* If the command doesn't exist, do not call fork */
+if (command_path == NULL)
 {
-if (strncmp(environ[i], "PATH=", 5) == 0)
-return (1);
-i++;
+fprintf(stderr, "Command not found: %s\n", args[0]);
+return;
 }
+
+pid = fork();
+if (pid == -1)
+{
+perror("Fork failed");
+return;
+}
+else if (pid == 0)
+{
+execve(command_path, args, environ);
+perror("Execve failed");
+exit(1);
+}
+else
+{
+wait(&status);
+}
+}
+
+/**
+ * handle_exit - exits the shell
+ *
+ * Return: void
+ */
+void handle_exit(void)
+{
+exit(0);
+}
+
+int main(void)
+{
+char *line = NULL;
+size_t len = 0;
+ssize_t nread;
+char **args;
+
+while (1)
+{
+printf("$ ");
+nread = getline(&line, &len, stdin);
+
+if (nread == -1)
+{
+perror("getline failed");
+break;
+}
+
+line[strcspn(line, "\n")] = 0;
+
+if (strcmp(line, "exit") == 0)
+{
+handle_exit();
+}
+
+args = parse_input(line);
+execute_command(args);
+free_tokens(args);
+}
+
+free(line);
 return (0);
 }
