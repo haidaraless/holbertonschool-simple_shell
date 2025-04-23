@@ -31,10 +31,6 @@ free_tokens(args);
 continue;
 }
 
-if (handle_builtin(args, line))
-{
-continue;
-}
 
 if (!check_command_in_path(args[0]))
 {
