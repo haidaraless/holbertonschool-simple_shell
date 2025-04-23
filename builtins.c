@@ -12,6 +12,13 @@ int handle_builtin(char **args)
 
 	if (strcmp(args[0], "exit") == 0)
 	{
+	 if (args[1] != NULL)
+	{
+
+	fprintf(stderr, "exit: too many arguments\n");
+	return (1);
+
+	}
 		free(args);
 		exit(0);
 	}
