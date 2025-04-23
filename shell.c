@@ -31,7 +31,7 @@ free_tokens(args);
 continue;
 }
 
- if (handle_builtin(args, line))
+if (handle_builtin(args, line))
 {
 continue;
 }
