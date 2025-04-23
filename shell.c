@@ -1,9 +1,4 @@
 #include "simple_shell.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/wait.h>
 
 /**
 * main - Basic shell loop that handles command lines with arguments
@@ -36,13 +31,10 @@ free_tokens(args);
 continue;
 }
 
-if (strcmp(args[0], "exit") == 0)
+ if (handle_builtin(args, line))
 {
-free_tokens(args);
-free(line);
-exit(0);
+continue;
 }
-
 
 if (!check_command_in_path(args[0]))
 {
