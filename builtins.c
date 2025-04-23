@@ -13,6 +13,10 @@ return (0);
 if (strcmp(args[0], "exit") == 0)
 {
 
+int status = 0;
+if (args[1])
+status = atoi(args[1]);
+
 free(args);
 exit(0);
 }
