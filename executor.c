@@ -6,54 +6,104 @@
 #include <stdlib.h>
 
 /**
-* execute_command - creates a child process to run an external command.
-* @args: array of strings representing the command and its arguments.
-*
-* Description:
-*   Uses fork to create a new process. In the child process, it replaces
-*   itself with the specified command using execve(). The parent waits
-*   for the child to complete. If the command is not found, an error
-*   message is printed.
+* is_builtin - Checks and executes built-in commands
+* @args: Command and arguments
+* Return: 1 if built-in executed, 0 otherwise
 */
-void execute_command(char **args)
+int is_builtin(char **args)
 {
-	pid_t pid = fork();
+if (strcmp(args[0], "env") == 0)
+{
+int i = 0;
+while (environ[i])
+printf("%s\n", environ[i++]);
+return (1);
+}
+return (0);
+}
 
-	if (pid == 0)
-	{
-		/* Child process */
-		if (execve(args[0], args, environ) == -1)
-		{
-			perror(args[0]); /* Specific error message with command name */
-		}
-		exit(EXIT_FAILURE);  /* Exit if execve fails */
-	}
-	else if (pid < 0)
-	{
-		perror("fork"); /* Fork failed */
-	}
-	else
-	{
-		/* Parent process waits and checks child exit status */
-		int status;
+/**
+* resolve_cmd_path - Resolves the full path of the command
+* @cmd: Command name
+* Return: Path if found and executable, NULL otherwise
+*/
+char *resolve_cmd_path(char *cmd)
+{
+char *cmd_path = NULL;
 
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-		{
-			int exit_status = WEXITSTATUS(status);
+if (strchr(cmd, '/'))
+{
+if (access(cmd, X_OK) == 0)
+cmd_path = strdup(cmd);
+}
+else
+cmd_path = find_command(cmd);
 
-			if (exit_status != 0)
-			{
-				/* You can handle non-zero exit status here */
-				fprintf(stderr, "Command '%s' exited with status %d\n",
-						args[0], exit_status);
-			}
-		}
-		else if (WIFSIGNALED(status))
-		{
-			/* In case the child was terminated by a signal */
-			fprintf(stderr, "Command '%s' terminated by signal %d\n",
-					args[0], WTERMSIG(status));
-		}
-	}
+return (cmd_path);
+}
+
+/**
+* run_cmd - Forks and executes the command
+* @cmd_path: Path to the executable
+* @args: Command and arguments
+* Return: Exit status of the command
+*/
+int run_cmd(char *cmd_path, char **args)
+{
+pid_t pid;
+int status;
+
+pid = fork();
+if (pid == 0)
+{
+if (execve(cmd_path, args, environ) == -1)
+{
+fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+free(cmd_path);
+exit(127);
+}
+}
+else if (pid < 0)
+{
+perror("fork");
+status = 1;
+}
+else
+{
+waitpid(pid, &status, 0);
+if (WIFEXITED(status))
+status = WEXITSTATUS(status);
+else
+status = 1;
+}
+
+return (status);
+}
+
+/**
+* execute_cmd - Main command execution handler
+* @args: Command and arguments
+* Return: Exit status
+*/
+int execute_cmd(char **args)
+{
+char *cmd_path;
+int status;
+
+if (args[0] == NULL)
+return (0);
+
+if (is_builtin(args))
+return (0);
+
+cmd_path = resolve_cmd_path(args[0]);
+if (cmd_path == NULL)
+{
+fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+return (127);
+}
+
+status = run_cmd(cmd_path, args);
+free(cmd_path);
+return (status);
 }
