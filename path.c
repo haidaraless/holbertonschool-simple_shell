@@ -1,86 +1,71 @@
-#include "shell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "path.c"
+"
 
 /**
-* print_prompt - Prints the prompt
-*/
-void print_prompt(void)
+ * find_command - finds the path of a given command
+ * @command: the command to search for
+ *
+ * Return: the full path to the command, or NULL if not found
+ */
+char *find_command(char *command)
 {
-if (isatty(STDIN_FILENO))
-write(STDOUT_FILENO, "($) ", 4);
+char *path_env = NULL;
+char *path_copy, *dir;
+char full_path[1024];
+int i = 0;
+
+/* search PATH manually inside environ */
+
+while (environ[i])
+{
+if (strncmp(environ[i], "PATH=", 5) == 0)
+{
+path_env = environ[i] + 5;
+break;
+}
+i++;
+}
+
+if (!path_env)
+return (NULL);
+
+path_copy = strdup(path_env);
+dir = strtok(path_copy, ":");
+
+while (dir)
+{
+sprintf(full_path, "%s/%s", dir, command);
+if (access(full_path, X_OK) == 0)
+{
+free(path_copy);
+return (strdup(full_path));
+}
+dir = strtok(NULL, ":");
+}
+
+free(path_copy);
+return (NULL);
 }
 
 /**
-* read_line - Reads a line from stdin
-* @line: Buffer to store the line
-* @len: Size of the buffer
-* Return: The number of characters read or -1 on error
-*/
-ssize_t read_line(char **line, size_t *len)
+ * has_path_env - Checks if the PATH variable is present in the environment
+ *
+ * Return: 1 if PATH is found, 0 otherwise
+ */
+
+int has_path_env(void)
 {
-return (getline(line, len, stdin));
-}
+	int i = 0;
 
-/**
-* handle_exit - Handles the exit command
-* @args: Command arguments
-* @line: The input line
-* @last_status: The last exit status
-* Return: Exit status
-*/
-int handle_exit(char **args, char *line, int last_status)
-{
-int status = last_status;
-
-if (args[1])
-status = atoi(args[1]);
-
-free(line);
-free(args);
-exit(status);
-}
-
-/**
-* main - Entry point of the shell
-* Return: Always 0
-*/
-int main(void)
-{
-char *line = NULL;
-size_t len = 0;
-ssize_t read;
-char **args;
-int status = 0;
-
-while (1)
-{
-print_prompt();
-
-read = read_line(&line, &len);
-if (read == -1)  /* EOF case (Ctrl+D) */
-{
-free(line);
-exit(status);  /* Exit with the last recorded case */
-}
-
-args = parse_line(line);
-if (args[0] != NULL)
-{
-if (strcmp(args[0], "exit") == 0)
-{
-handle_exit(args, line, status);
-}
-else
-{
-status = execute_cmd(args);/* Save the exit status of the command execution */
-}
-}
-
-free(args);
-free(line); /* Freeing memory */
-line = NULL; /* Reset variable */
-len = 0; /* Reset buffer lemgth */
-}
-
-
-return (status);
+	while (environ[i])
+	{
+		if (strncmp(environ[i], "PATH=", 5) == 0)
+			return (1);
+		i++;
+	}
+	return (0);
 }
