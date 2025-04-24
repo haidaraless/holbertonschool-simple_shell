@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "path.c"
-"
+#include "simple_shell.h"
+
 
 /**
  * find_command - finds the path of a given command
