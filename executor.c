@@ -5,22 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
-* is_builtin - Checks and executes built-in commands
-* @args: Command and arguments
-* Return: 1 if built-in executed, 0 otherwise
-*/
-int is_builtin(char **args)
-{
-if (strcmp(args[0], "env") == 0)
-{
-int i = 0;
-while (environ[i])
-printf("%s\n", environ[i++]);
-return (1);
-}
-return (0);
-}
 
 /**
 * resolve_cmd_path - Resolves the full path of the command
