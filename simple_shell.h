@@ -27,5 +27,6 @@ char **parse_line(char *line);
 int execute_cmd(char **args);
 extern char **environ;
 char *find_command(char *command);
+extern int last_status;
 
 #endif /* SIMPLE_SHELL_H */
