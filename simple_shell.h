@@ -16,9 +16,7 @@
 #include <sys/wait.h>
 
 /* function prototypes */
-/*void free_tokens(char **tokens);*/
-
-
+void free_tokens(char **tokens);
 int has_path_env(void);
 char **parse_line(char *line);
 int execute_cmd(char **args);
