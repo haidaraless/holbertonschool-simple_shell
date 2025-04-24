@@ -7,14 +7,12 @@
 */
 int handle_builtin(char **args)
 {
-if (args[0] == NULL)
-return (0);
-
-if (strcmp(args[0], "exit") == 0)
+if (strcmp(args[0], "env") == 0)
 {
-
-free(args);
-exit(0);
+int i = 0;
+while (environ[i])
+printf("%s\n", environ[i++]);
+return (1);
 }
 return (0);
 }
