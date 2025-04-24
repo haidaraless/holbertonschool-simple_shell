@@ -1,58 +1,92 @@
 #include "simple_shell.h"
 #include "builtins.h"
 
-
 /**
  * main - Basic shell loop that handles command lines with arguments
  * Return: Always 0
  */
 
+/**
+* print_prompt - Prints the prompt
+*/
+void print_prompt(void)
+{
+if (isatty(STDIN_FILENO))
+write(STDOUT_FILENO, "($) ", 4);
+}
+
+/**
+* read_line - Reads a line from stdin
+* @line: Buffer to store the line
+* @len: Size of the buffer
+* Return: The number of characters read or -1 on error
+*/
+ssize_t read_line(char **line, size_t *len)
+{
+return (getline(line, len, stdin));
+}
+
+/**
+* handle_exit - Handles the exit command
+* @args: Command arguments
+* @line: The input line
+* @last_status: The last exit status
+* Return: Exit status
+*/
+int handle_exit(char **args, char *line, int last_status)
+{
+int status = last_status;
+
+if (args[1])
+status = atoi(args[1]);
+
+free(line);
+free(args);
+exit(status);
+}
+
+/**
+* main - Entry point of the shell
+* Return: Always 0
+*/
 int main(void)
 {
 char *line = NULL;
 size_t len = 0;
 ssize_t read;
 char **args;
-pid_t pid;
-int status;
+int status = 0;
+
 while (1)
 {
-if (isatty(STDIN_FILENO))
-printf("$ ");
-read = getline(&line, &len, stdin);
+print_prompt();
+
+read = read_line(&line, &len);
 if (read == -1)
-break;
-if (line[read - 1] == '\n')
-line[read - 1] = '\0';
-args = parse_line(line);
-if (!args || !args[0])
 {
-free_tokens(args);
-continue;
-}
-if (handle_builtin(args, line))
-{
-continue;
-}
-if (!check_command_in_path(args[0]))
-{
-fprintf(stderr, "%s: command not found\n", args[0]);
-free_tokens(args);
-continue;
-}
-pid = fork();
-if (pid == 0)
-{
-execvp(args[0], args);
-perror("hsh");
-exit(EXIT_FAILURE);
-}
-else if (pid < 0)
-perror("fork");
-else
-waitpid(pid, &status, 0);
-free_tokens(args);
-}
 free(line);
-return (0);
+exit(status);
+}
+
+args = parse_line(line);
+if (args[0] != NULL)
+{
+if (strcmp(args[0], "exit") == 0)
+{
+handle_exit(args, line, status);
+}
+else
+{
+status = execute_cmd(args);
+}
+}
+
+free(args);
+free(line);
+line = NULL;
+len = 0;
+}
+
+
+return (status);
 }
