@@ -24,7 +24,7 @@ if (read == -1)
 break;
 if (line[read - 1] == '\n')
 line[read - 1] = '\0';
-args = parse_input(line);
+args = parse_line(line);
 if (!args || !args[0])
 {
 free_tokens(args);
