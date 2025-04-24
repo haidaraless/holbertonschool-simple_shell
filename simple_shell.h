@@ -21,4 +21,5 @@ void execute_command(char **args);
 void free_tokens(char **tokens);
 extern char **environ;
 char *find_command(char *command);
+extern char **environ;
 #endif /* SIMPLE_SHELL_H */
