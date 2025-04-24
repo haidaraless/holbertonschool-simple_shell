@@ -16,10 +16,16 @@
 #include <sys/wait.h>
 
 /* function prototypes */
-char **parse_input(char *line);
+//*char **parse_input(char *line);
 void execute_command(char **args);
 void free_tokens(char **tokens);
+extern char **environ;*/
+
+
+int has_path_env(void);
+char **parse_line(char *line);
+int execute_cmd(char **args);
 extern char **environ;
 char *find_command(char *command);
-extern char **environ;
+
 #endif /* SIMPLE_SHELL_H */
