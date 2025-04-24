@@ -24,4 +24,6 @@ extern char **environ;
 char *find_command(char *command);
 extern int last_status;
 
+void print_prompt(void);
+ssize_t read_line(char **line, size_t *len);
 #endif /* SIMPLE_SHELL_H */
