@@ -1,10 +1,5 @@
 #include "simple_shell.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <stdio.h>
-#include <stdlib.h>
-
+#include “builtins.h”
 
 /**
 * resolve_cmd_path - Resolves the full path of the command
@@ -77,7 +72,7 @@ int status;
 if (args[0] == NULL)
 return (0);
 
-if (is_builtin(args))
+if (handle_builtin(args))
 return (0);
 
 cmd_path = resolve_cmd_path(args[0]);
