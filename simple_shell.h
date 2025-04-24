@@ -16,7 +16,7 @@
 #include <sys/wait.h>
 
 /* function prototypes */
-//*char **parse_input(char *line);
+/** char **parse_input(char *line);
 void execute_command(char **args);
 void free_tokens(char **tokens);
 extern char **environ;*/
